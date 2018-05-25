@@ -111,7 +111,7 @@ class PatientListResource(Resource):
         patient = models.Patient()
         patient.first_name = args['first_name']
         patient.last_name = args['last_name']
-        patient.date_of_birth = args['date_of_birth']
+        patient.date_of_birth = datetime.datetime.strptime(args['date_of_birth'], '%d-%m-%y')
         db.session.add(patient)
         db.session.commit()
         return {'patient': patient.jsonify()}, 201
