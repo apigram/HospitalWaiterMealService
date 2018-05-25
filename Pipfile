@@ -10,6 +10,7 @@ flask-httpauth = "*"
 mysqlclient = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
+flask-cors = "*"
 
 [dev-packages]
 

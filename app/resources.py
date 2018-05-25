@@ -2,6 +2,7 @@ from flask_restful import Resource, marshal, fields, reqparse
 from flask import abort
 from app import db
 from app import models
+import datetime
 
 meal_fields = {
     'label': fields.String,
@@ -13,7 +14,7 @@ meal_fields = {
 patient_fields = {
     'first_name': fields.String,
     'last_name': fields.String,
-    'date_of_birth': fields.DateTime,
+    'date_of_birth': fields.String,
     'uri': fields.Url('patient')
 }
 
@@ -74,17 +75,17 @@ class PatientResource(Resource):
         super(PatientResource, self).__init__()
 
     def get(self, id):
-        meal = models.Meal.query.get(id)
-        if meal is None:
+        patient = models.Patient.query.get(id)
+        if patient is None:
             abort(404)
-        return {'meal': marshal(meal, meal_fields)}
+        return {'patient': marshal(patient, patient_fields)}
 
     def put(self, id):
         pass
 
     def delete(self, id):
-        meal = models.Meal.query.get(id)
-        if meal is None:
+        patient = models.Patient.query.get(id)
+        if patient is None:
             abort(500)
         db.session.delete()
         return {"result": True}
@@ -93,15 +94,17 @@ class PatientResource(Resource):
 class PatientListResource(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('label', type=str, required=True,
-                                   help='No meal label provided.', location='json')
-        self.reqparse.add_argument('total_quantity', type=int, required=True,
-                                   help='No total quantity provided.', location='json')
+        self.reqparse.add_argument('first_name', type=str, required=True,
+                                   help='No first name provided.', location='json')
+        self.reqparse.add_argument('first_name', type=str, required=True,
+                                   help='No last name provided.', location='json')
+        self.reqparse.add_argument('date_of_birth', type=str, required=True,
+                                   help='No date of birth provided.', location='json')
         super(PatientListResource, self).__init__()
 
     def get(self):
-        meals = models.Meal.query.all()
-        return {'meals': marshal([meal for meal in meals], meal_fields)}
+        patients = models.Patient.query.all()
+        return {'patients': marshal([patient for  patient in patients], patient_fields)}
 
     def post(self):
         args = self.reqparse.parse_args()
