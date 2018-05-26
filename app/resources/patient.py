@@ -1,5 +1,4 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from flask import abort
 from app import db
 from app.models import Patient
 import datetime
@@ -8,7 +7,9 @@ patient_fields = {
     'first_name': fields.String,
     'last_name': fields.String,
     'date_of_birth': fields.String,
-    'uri': fields.Url('patient')
+    'uri': fields.Url('patient'),
+    'requirements': fields.Url('requirement_list_by_patient'),
+    'meals': fields.Url('meal_list_by_patient')
 }
 
 
@@ -36,6 +37,7 @@ class PatientResource(Resource):
     def delete(self, id):
         patient = Patient.query.get_or_404(id)
         db.session.delete(patient)
+        db.session.commit()
         return {"result": True}
 
 

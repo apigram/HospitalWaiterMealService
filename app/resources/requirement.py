@@ -1,12 +1,13 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from flask import abort
 from app import db
 from app.models import Requirement
 
 requirement_fields = {
     'label': fields.String,
     'type': fields.String,
-    'uri': fields.Url('requirement')
+    'uri': fields.Url('requirement'),
+    'patients': fields.Url('patient_list_by_requirement'),
+    'meals': fields.Url('meal_list_by_requirement')
 }
 
 
@@ -33,6 +34,7 @@ class RequirementResource(Resource):
     def delete(self, id):
         requirement = Requirement.query.get_or_404(id)
         db.session.delete(requirement)
+        db.session.commit()
         return {"result": True}
 
 
@@ -41,8 +43,8 @@ class RequirementListResource(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('label', type=str, required=True,
                                    help='No meal label provided.', location='json')
-        self.reqparse.add_argument('total_quantity', type=int, required=True,
-                                   help='No total quantity provided.', location='json')
+        self.reqparse.add_argument('type', type=str, required=True,
+                                   help='Type must be ALLERGEN, DIETARY_POSITIVE or DIETARY_NEGATIVE', location='json')
         super(RequirementListResource, self).__init__()
 
     def get(self):

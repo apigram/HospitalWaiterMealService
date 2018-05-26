@@ -80,12 +80,11 @@ class Requirement(db.Model):
         elif column == 'type':
             self.type = value
 
-
     def jsonify(self):
         return {
             "id": self.id,
             "label": self.label,
-            "type": self.total_quantity,
+            "type": self.type,
         }
 
 
