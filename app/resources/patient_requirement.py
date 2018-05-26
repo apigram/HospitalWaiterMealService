@@ -5,6 +5,7 @@ from app.models import PatientRequirement
 # Viewed from patient details
 requirement_by_patient_fields = {
     'label': fields.String,
+    'type': fields.String,
     'scale': fields.String,
     'uri': fields.Url('requirement_list_by_patient'),
     'requirement': fields.Url('requirement'),
@@ -37,6 +38,7 @@ class RequirementListByPatient(Resource):
             'patient_id': patient_requirement.patient_id,
             'requirement_id': patient_requirement.requirement_id,
             'label': patient_requirement.requirement.label,
+            'type': patient_requirement.requirement.type,
             'scale': patient_requirement.scale
         } for patient_requirement in patient_requirements]
 

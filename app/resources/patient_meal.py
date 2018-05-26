@@ -8,7 +8,7 @@ meal_by_patient_fields = {
     'quantity': fields.Integer,
     'uri': fields.Url('meal_list_by_patient'),
     'meal': fields.Url('meal'),
-    #'requirements': fields.Url('requirement_list_by_patient'),
+    'requirements': fields.Url('requirement_list_by_patient'),
     'patient_meal': fields.Url('patient_meal')
 }
 
@@ -26,7 +26,7 @@ class MealListByPatient(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('meal_id', type=int, required=True,
-                                   help='No total quantity provided.', location='json')
+                                   help='No meal provided.', location='json')
         self.reqparse.add_argument('quantity', type=int, required=True,
                                    help='Quantity must be no lower than 1', location='json')
         super(MealListByPatient, self).__init__()
@@ -51,7 +51,14 @@ class MealListByPatient(Resource):
         meal.quantity = args['quantity']
         db.session.add(meal)
         db.session.commit()
-        return {'meal': meal.jsonify()}, 201
+        meal_dict = {
+            'id': meal.id,
+            'patient_id': meal.patient_id,
+            'meal_id': meal.meal_id,
+            'label': meal.meal.label,
+            'quantity': meal.quantity
+        }
+        return {'meal': marshal(meal_dict, meal_by_patient_fields)}, 201
 
 
 class PatientListByMeal(Resource):

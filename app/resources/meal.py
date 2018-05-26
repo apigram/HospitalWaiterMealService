@@ -3,11 +3,14 @@ from app import db
 from app.models import Meal
 
 meal_fields = {
+    'id': fields.Integer,
     'label': fields.String,
     'total_quantity': fields.Integer,
     'current_quantity': fields.Integer,
+    'time_of_day': fields.String,
     'uri': fields.Url('meal'),
     'patients': fields.Url('patient_list_by_meal'),
+    'patient_meal': fields.Url('meal_list_by_patient'),
     'requirements': fields.Url('meal_list_by_requirement')
 }
 
@@ -47,6 +50,8 @@ class MealListResource(Resource):
                                    help='No meal label provided.', location='json')
         self.reqparse.add_argument('total_quantity', type=int, required=True,
                                    help='No total quantity provided.', location='json')
+        self.reqparse.add_argument('time_of_day', type=str, required=True,
+                                   help='Must be either Breakfast, Lunch or Dinner', location='json')
         super(MealListResource, self).__init__()
 
     def get(self):
@@ -59,6 +64,7 @@ class MealListResource(Resource):
         meal.label = args['label']
         meal.total_quantity = args['total_quantity']
         meal.current_quantity = args['total_quantity']
+        meal.time_of_day = args['time_of_day']
         db.session.add(meal)
         db.session.commit()
         return {'meal': meal.jsonify()}, 201

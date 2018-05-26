@@ -8,6 +8,7 @@ class Meal(db.Model):
     label = db.Column(db.String(100))
     total_quantity = db.Column(db.Integer)
     current_quantity = db.Column(db.Integer)
+    time_of_day = db.Column(db.String(20))
 
     patients = db.relationship('PatientMeal', back_populates='meal')
     requirements = db.relationship('MealRequirement', back_populates='meal')
@@ -22,13 +23,16 @@ class Meal(db.Model):
             self.total_quantity = value
         elif column == 'current_quantity':
             self.current_quantity = value
+        elif column == 'time_of_day':
+            self.time_of_day = value
 
     def jsonify(self):
         return {
             "id": self.id,
             "label": self.label,
             "total_quantity": self.total_quantity,
-            "current_quantity": self.current_quantity
+            "current_quantity": self.current_quantity,
+            "time_of_day": self.time_of_day
         }
 
 
