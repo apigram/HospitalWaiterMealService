@@ -40,14 +40,16 @@ class RequirementResource(Resource):
 class RequirementListResource(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('label', type=str, required=True,
-                                   help='No meal label provided.', location='json')
-        self.reqparse.add_argument('type', type=str, required=True,
-                                   help='Type must be ALLERGEN, DIETARY_POSITIVE or DIETARY_NEGATIVE', location='json')
+        self.reqparse.add_argument('label', type=str, location=['json', 'args'])
+        self.reqparse.add_argument('type', type=str, location='json')
         super(RequirementListResource, self).__init__()
 
     def get(self):
-        requirements = Requirement.query.all()
+        args = self.reqparse.parse_args()
+        if args['label'] is None:
+            requirements = Requirement.query.all()
+        else:
+            requirements = Requirement.query.filter(Requirement.label.contains(args['label'])).all()
         return {'requirements': marshal([requirement for requirement in requirements], requirement_fields)}
 
     def post(self):

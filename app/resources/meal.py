@@ -46,16 +46,17 @@ class MealResource(Resource):
 class MealListResource(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('label', type=str, required=True,
-                                   help='No meal label provided.', location='json')
-        self.reqparse.add_argument('total_quantity', type=int, required=True,
-                                   help='No total quantity provided.', location='json')
-        self.reqparse.add_argument('time_of_day', type=str, required=True,
-                                   help='Must be either Breakfast, Lunch or Dinner', location='json')
+        self.reqparse.add_argument('label', type=str, location=['json', 'args'])
+        self.reqparse.add_argument('total_quantity', type=int, location='json')
+        self.reqparse.add_argument('time_of_day', type=str, location='json')
         super(MealListResource, self).__init__()
 
     def get(self):
-        meals = Meal.query.all()
+        args = self.reqparse.parse_args()
+        if args['label'] is None:
+            meals = Meal.query.all()
+        else:
+            meals = Meal.query.filter(Meal.label.contains(args['label'])).all()
         return {'meals': marshal([meal for meal in meals], meal_fields)}
 
     def post(self):

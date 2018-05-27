@@ -44,16 +44,19 @@ class PatientResource(Resource):
 class PatientListResource(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('first_name', type=str, required=True,
-                                   help='No first name provided.', location='json')
-        self.reqparse.add_argument('last_name', type=str, required=True,
-                                   help='No last name provided.', location='json')
-        self.reqparse.add_argument('date_of_birth', type=str, required=True,
-                                   help='No date of birth provided.', location='json')
+        self.reqparse.add_argument('first_name', type=str, location='json')
+        self.reqparse.add_argument('last_name', type=str, location='json')
+        self.reqparse.add_argument('name', type=str, location='args')
+        self.reqparse.add_argument('date_of_birth', type=str, location='json')
         super(PatientListResource, self).__init__()
 
     def get(self):
-        patients = Patient.query.all()
+        args = self.reqparse.parse_args()
+        if args['name'] is None:
+            patients = Patient.query.all()
+        else:
+            patients = Patient.query.filter(Patient.first_name.contains(args['name'])).all()
+
         return {'patients': marshal([patient for patient in patients], patient_fields)}
 
     def post(self):

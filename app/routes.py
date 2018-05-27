@@ -6,6 +6,7 @@ from app.resources.requirement import RequirementResource, RequirementListResour
 from app.resources.patient_meal import MealListByPatient, PatientListByMeal, PatientMealResource
 from app.resources.patient_requirement import PatientListByRequirement, RequirementListByPatient, PatientRequirementResource
 from app.resources.meal_requirement import MealListByRequirement, RequirementListByMeal, MealRequirementResource
+from app.resources.metadata import RequirementTypeList, MealTimeList
 
 api = Api(app)
 
@@ -46,3 +47,6 @@ api.add_resource(RequirementListByMeal, '/mealservice/meal/<int:id>/requirement'
                  endpoint='requirement_list_by_meal')
 api.add_resource(MealRequirementResource, '/mealservice/meal/<int:meal_id>/requirement/<int:requirement_id>',
                  endpoint='meal_requirement')
+
+api.add_resource(RequirementTypeList, '/mealservice/ref/requirement_type', endpoint='requirement_type_list')
+api.add_resource(MealTimeList, '/mealservice/ref/meal_time', endpoint='meal_time_list')
