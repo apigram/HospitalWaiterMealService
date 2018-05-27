@@ -10,7 +10,6 @@ requirement_fields = {
     'meals': fields.Url('meal_list_by_requirement')
 }
 
-
 class RequirementResource(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()

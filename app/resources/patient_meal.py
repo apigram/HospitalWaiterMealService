@@ -4,6 +4,7 @@ from app.models import PatientMeal
 
 # Viewed from patient details
 meal_by_patient_fields = {
+    'id': fields.Integer,
     'label': fields.String,
     'quantity': fields.Integer,
     'uri': fields.Url('meal_list_by_patient'),
@@ -78,6 +79,7 @@ class PatientListByMeal(Resource):
 class PatientMealResource(Resource):
     def delete(self, patient_id, meal_id):
         patient_meal = PatientMeal.query.filter_by(patient_id=patient_id, meal_id=meal_id).first()
+        id = patient_meal.id;
         db.session.delete(patient_meal)
         db.session.commit()
-        return {'result': True}
+        return {'result': True, 'meal_id': meal_id, 'patient_id': patient_id, 'id': id}

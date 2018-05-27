@@ -11,7 +11,7 @@ meal_fields = {
     'uri': fields.Url('meal'),
     'patients': fields.Url('patient_list_by_meal'),
     'patient_meal': fields.Url('meal_list_by_patient'),
-    'requirements': fields.Url('meal_list_by_requirement')
+    'requirements': fields.Url('requirement_list_by_meal')
 }
 
 
