@@ -44,5 +44,5 @@ api.add_resource(MealListByRequirement, '/mealservice/requirement/<int:id>/meal'
                  endpoint='meal_list_by_requirement')
 api.add_resource(RequirementListByMeal, '/mealservice/meal/<int:id>/requirement',
                  endpoint='requirement_list_by_meal')
-api.add_resource(MealRequirementResource, '/mealservice/patient/<int:meal_id>/meal/<int:requirement_id>',
+api.add_resource(MealRequirementResource, '/mealservice/meal/<int:meal_id>/requirement/<int:requirement_id>',
                  endpoint='meal_requirement')
