@@ -191,7 +191,6 @@ class User(db.Model):
     username = db.Column(db.String(100))
     password = db.Column(db.String(3000))
     email = db.Column(db.String(100))
-    token = db.Column(db.String(3000))
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
 
     patient = db.relationship('Patient')

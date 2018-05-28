@@ -1,5 +1,5 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from app import db
+from app import db, auth
 from app.models import PatientMeal
 
 # Viewed from patient details
@@ -24,6 +24,8 @@ patient_by_meal_fields = {
 
 
 class MealListByPatient(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('meal_id', type=int, required=True,
@@ -63,6 +65,8 @@ class MealListByPatient(Resource):
 
 
 class PatientListByMeal(Resource):
+    decorators = [auth.login_required]
+
     def get(self, id):
         patient_meals = PatientMeal.query.filter_by(meal_id=id).all()
         patient_list = [{
@@ -77,9 +81,11 @@ class PatientListByMeal(Resource):
 
 
 class PatientMealResource(Resource):
+    decorators = [auth.login_required]
+
     def delete(self, patient_id, meal_id):
         patient_meal = PatientMeal.query.filter_by(patient_id=patient_id, meal_id=meal_id).first()
-        id = patient_meal.id;
+        id = patient_meal.id
         db.session.delete(patient_meal)
         db.session.commit()
         return {'result': True, 'meal_id': meal_id, 'patient_id': patient_id, 'id': id}

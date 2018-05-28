@@ -1,5 +1,5 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from app import app, db, mail
+from app import app, db, mail, auth
 from app.models import Patient, User
 import datetime
 import random
@@ -17,6 +17,8 @@ patient_fields = {
 
 
 class PatientResource(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('first_name', type=str, location='json')
@@ -45,6 +47,8 @@ class PatientResource(Resource):
 
 
 class PatientListResource(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('first_name', type=str, location='json')

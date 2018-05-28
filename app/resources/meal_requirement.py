@@ -1,5 +1,5 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from app import db
+from app import db, auth
 from app.models import MealRequirement
 
 # Viewed from requirement details
@@ -22,6 +22,8 @@ requirement_by_meal_fields = {
 
 
 class MealListByRequirement(Resource):
+    decorators = [auth.login_required]
+
     def get(self, id):
         requirement_meals = MealRequirement.query.filter_by(requirement_id=id).all()
         meal_list = [{
@@ -36,6 +38,8 @@ class MealListByRequirement(Resource):
 
 
 class RequirementListByMeal(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('requirement_id', type=int, required=True,
@@ -77,6 +81,8 @@ class RequirementListByMeal(Resource):
 
 
 class MealRequirementResource(Resource):
+    decorators = [auth.login_required]
+
     def delete(self, meal_id, requirement_id):
         meal_requirement = MealRequirement.query.filter_by(requirement_id=requirement_id, meal_id=meal_id).first()
         db.session.delete(meal_requirement)

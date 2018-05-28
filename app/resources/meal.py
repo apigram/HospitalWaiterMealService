@@ -1,5 +1,5 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from app import db
+from app import db, auth
 from app.models import Meal
 
 meal_fields = {
@@ -16,6 +16,8 @@ meal_fields = {
 
 
 class MealResource(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('label', type=str, location='json')
@@ -44,6 +46,8 @@ class MealResource(Resource):
 
 
 class MealListResource(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('label', type=str, location=['json', 'args'])
@@ -62,10 +66,11 @@ class MealListResource(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         meal = Meal()
+        print(args['label'])
         meal.label = args['label']
         meal.total_quantity = args['total_quantity']
         meal.current_quantity = args['total_quantity']
         meal.time_of_day = args['time_of_day']
         db.session.add(meal)
         db.session.commit()
-        return {'meal': meal.jsonify()}, 201
+        return {'meal': marshal(meal, meal_fields)}, 201

@@ -1,5 +1,5 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from app import db
+from app import db, auth
 from app.models import Requirement
 
 requirement_fields = {
@@ -10,7 +10,10 @@ requirement_fields = {
     'meals': fields.Url('meal_list_by_requirement')
 }
 
+
 class RequirementResource(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('label', type=str, location='json')
@@ -38,6 +41,8 @@ class RequirementResource(Resource):
 
 
 class RequirementListResource(Resource):
+    decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('label', type=str, location=['json', 'args'])
@@ -59,4 +64,4 @@ class RequirementListResource(Resource):
         requirement.type = args['type']
         db.session.add(requirement)
         db.session.commit()
-        return {'requirements': requirement.jsonify()}, 201
+        return {'requirement': marshal(requirement, requirement_fields)}, 201

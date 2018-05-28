@@ -24,7 +24,8 @@ def verify_password(username_or_token, password):
 
 
 class TokenResource(Resource):
-    @auth.login_required
+    decorators = [auth.login_required]
+
     def get(self):
         user = {
             'patient_id': g.user.patient_id,
