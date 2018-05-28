@@ -1,5 +1,8 @@
-from app import db
+from app import app, db
 from datetime import datetime
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
+import bcrypt
 
 
 class Meal(db.Model):
@@ -180,3 +183,34 @@ class PatientRequirement(db.Model):
             "requirement_id": self.requirement_id,
             "scale": self.scale
         }
+
+
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100))
+    password = db.Column(db.String(3000))
+    email = db.Column(db.String(100))
+    token = db.Column(db.String(3000))
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
+
+    patient = db.relationship('Patient')
+
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(app.config.get('SECRET_KEY'), expires_in=expiration)
+        return s.dumps({'id': self.id, 'patient_id': self.patient_id})
+
+    def verify_password(self, password):
+        return bcrypt.checkpw(password.encode('utf8'), self.password.encode('utf8'))
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config.get('SECRET_KEY'))
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None  # valid token, but expired
+        except BadSignature:
+            return None  # invalid token
+        user = User.query.get(data['id'])
+        return user

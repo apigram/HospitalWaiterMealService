@@ -1,7 +1,10 @@
 from flask_restful import Resource, marshal, fields, reqparse
-from app import db
-from app.models import Patient
+from app import app, db, mail
+from app.models import Patient, User
 import datetime
+import random
+from flask_mail import Message
+import bcrypt
 
 patient_fields = {
     'first_name': fields.String,
@@ -48,6 +51,7 @@ class PatientListResource(Resource):
         self.reqparse.add_argument('last_name', type=str, location='json')
         self.reqparse.add_argument('name', type=str, location='args')
         self.reqparse.add_argument('date_of_birth', type=str, location='json')
+        self.reqparse.add_argument('email', type=str, location='json')
         super(PatientListResource, self).__init__()
 
     def get(self):
@@ -64,7 +68,26 @@ class PatientListResource(Resource):
         patient = Patient()
         patient.first_name = args['first_name']
         patient.last_name = args['last_name']
-        patient.date_of_birth = datetime.datetime.strptime(args['date_of_birth'], '%d-%m-%Y')
+        patient.date_of_birth = datetime.datetime.strptime(args['date_of_birth'], '%Y-%m-%d')
+        user = User()
+        user.username = patient.first_name[0].lower() + patient.last_name.lower()
+        user.email = args['email']
+        password = "%09d" % (random.randrange(1, 9999999999),)
+        msg = Message(subject="Password",
+                      recipients=[user.email],
+                      body="Your credentials to log into the HospitalWaiter application is as follows:\n\n"
+                           "Username: %s\n"
+                           "Password: %s\n\n"
+                           "Keep these credentials secure!" % (user.username, password))
+        with app.app_context():
+            mail.send(msg)
+
+        user.password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt(10))
+
         db.session.add(patient)
         db.session.commit()
-        return {'patient': patient.jsonify()}, 201
+
+        user.patient_id = patient.id
+        db.session.add(user)
+        db.session.commit()
+        return {'patient': marshal(patient, patient_fields)}, 201
