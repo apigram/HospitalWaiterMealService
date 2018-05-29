@@ -58,7 +58,7 @@ class Patient(db.Model):
         elif column == 'last_name':
             self.last_name = value
         elif column == 'date_of_birth':
-            self.date_of_birth = datetime.strptime(value, '%d-%m-%Y')
+            self.date_of_birth = datetime.strptime(value, '%Y-%m-%d')
 
     def jsonify(self):
         return {

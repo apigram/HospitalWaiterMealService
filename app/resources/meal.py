@@ -42,7 +42,7 @@ class MealResource(Resource):
         meal = Meal.query.get_or_404(id)
         db.session.delete(meal)
         db.session.commit()
-        return {"result": True}
+        return {"result": True, "id": id}
 
 
 class MealListResource(Resource):

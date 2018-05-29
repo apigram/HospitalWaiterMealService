@@ -43,7 +43,7 @@ class PatientResource(Resource):
         patient = Patient.query.get_or_404(id)
         db.session.delete(patient)
         db.session.commit()
-        return {"result": True}
+        return {"result": True, "id": id}
 
 
 class PatientListResource(Resource):

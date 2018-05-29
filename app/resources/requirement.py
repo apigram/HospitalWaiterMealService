@@ -37,7 +37,7 @@ class RequirementResource(Resource):
         requirement = Requirement.query.get_or_404(id)
         db.session.delete(requirement)
         db.session.commit()
-        return {"result": True}
+        return {"result": True, "id": id}
 
 
 class RequirementListResource(Resource):
