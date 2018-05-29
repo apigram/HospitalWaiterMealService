@@ -3,6 +3,7 @@ from app import db, auth
 from app.models import Requirement
 
 requirement_fields = {
+    'id': fields.Integer,
     'label': fields.String,
     'type': fields.String,
     'uri': fields.Url('requirement'),

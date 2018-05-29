@@ -4,6 +4,7 @@ from app.models import PatientRequirement
 
 # Viewed from patient details
 requirement_by_patient_fields = {
+    'id': fields.Integer,
     'label': fields.String,
     'type': fields.String,
     'scale': fields.String,
@@ -14,6 +15,7 @@ requirement_by_patient_fields = {
 
 # Viewed from requirement details
 patient_by_requirement_fields = {
+    'id': fields.Integer,
     'patient_name': fields.String,
     'scale': fields.String,
     'uri': fields.Url('patient_list_by_requirement'),
@@ -28,9 +30,8 @@ class RequirementListByPatient(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('requirement_id', type=int, required=True,
-                                   help='No total quantity provided.', location='json')
-        self.reqparse.add_argument('scale', type=str, required=True,
-                                   help='Scale must be either Trace or Whole', location='json')
+                                   help='No requirement provided.', location='json')
+        self.reqparse.add_argument('scale', type=str, location='json')
         super(RequirementListByPatient, self).__init__()
 
     def get(self, id):
@@ -54,7 +55,7 @@ class RequirementListByPatient(Resource):
         requirement.scale = args['scale']
         db.session.add(requirement)
         db.session.commit()
-        return {'requirement': requirement.jsonify()}, 201
+        return {'requirement': marshal(requirement, requirement_by_patient_fields)}, 201
 
 
 class PatientListByRequirement(Resource):
@@ -78,6 +79,7 @@ class PatientRequirementResource(Resource):
 
     def delete(self, patient_id, requirement_id):
         patient_requirement = PatientRequirement.query.filter_by(patient_id=patient_id, requirement_id=requirement_id).first()
+        id = patient_requirement.id
         db.session.delete(patient_requirement)
         db.session.commit()
-        return {'result': True}
+        return {'result': True, "id": id}

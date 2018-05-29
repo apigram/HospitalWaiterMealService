@@ -4,6 +4,7 @@ from app.models import MealRequirement
 
 # Viewed from requirement details
 meal_by_requirement_fields = {
+    'id': fields.Integer,
     'label': fields.String,
     'scale': fields.String,
     'uri': fields.Url('meal_list_by_requirement'),
@@ -12,6 +13,7 @@ meal_by_requirement_fields = {
 
 # Viewed from meal details
 requirement_by_meal_fields = {
+    'id': fields.Integer,
     'label': fields.String,
     'scale': fields.String,
     'type': fields.String,
@@ -85,6 +87,7 @@ class MealRequirementResource(Resource):
 
     def delete(self, meal_id, requirement_id):
         meal_requirement = MealRequirement.query.filter_by(requirement_id=requirement_id, meal_id=meal_id).first()
+        id = meal_requirement.id
         db.session.delete(meal_requirement)
         db.session.commit()
-        return {'result': True}
+        return {'result': True, "id": id}
