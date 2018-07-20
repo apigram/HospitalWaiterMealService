@@ -52,4 +52,4 @@ api.add_resource(MealRequirementResource, '/mealservice/meal/<int:meal_id>/requi
 
 api.add_resource(RequirementTypeList, '/mealservice/ref/requirement_type', endpoint='requirement_type_list')
 api.add_resource(MealTimeList, '/mealservice/ref/meal_time', endpoint='meal_time_list')
-api.add_resource(TokenResource, '/auth/token', endpoint='auth_token')
+api.add_resource(TokenResource, '/mealservice/auth/token', endpoint='auth_token')
