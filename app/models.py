@@ -1,8 +1,8 @@
-from app import app, db
+from app import app, db, auth
 from datetime import datetime
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
-import bcrypt
+from flask import g
 
 
 class Meal(db.Model):
@@ -195,13 +195,6 @@ class User(db.Model):
 
     patient = db.relationship('Patient')
 
-    def generate_auth_token(self, expiration=600):
-        s = Serializer(app.config.get('SECRET_KEY'), expires_in=expiration)
-        return s.dumps({'id': self.id, 'patient_id': self.patient_id})
-
-    def verify_password(self, password):
-        return bcrypt.checkpw(password.encode('utf8'), self.password.encode('utf8'))
-
     @staticmethod
     def verify_auth_token(token):
         s = Serializer(app.config.get('SECRET_KEY'))
@@ -213,3 +206,12 @@ class User(db.Model):
             return None  # invalid token
         user = User.query.get(data['id'])
         return user
+
+    @staticmethod
+    @auth.verify_token
+    def verify_token(token):
+        # first try to authenticate by token
+        user = User.verify_auth_token(token)
+        if not user:
+            return False
+        return True
