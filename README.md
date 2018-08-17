@@ -13,7 +13,8 @@ It is best to run the microservice using a virtual Python environment (`virtuale
     * MAIL_USER - The username of the server's email
     * MAIL_PASSWORD - Email password.
     * DATABASE_URL - The URL of the database to interface with. This should include the schema, host, port and password where applicable.
-5. Run the following command: `flask run -p [PORT]` (where `[PORT]` is the port from which to run the microservice. This defaults to 5000 but may need to change if multiple microservices are running from the same machine). This will start the server.
+5. Set the FLASK_APP environment variable to "MealService.py".
+6. Run the following command: `flask run -p [PORT]` (where `[PORT]` is the port from which to run the microservice. This defaults to 5000 but may need to change if multiple microservices are running from the same machine). This will start the server.
 
 ## API specification
 The following endpoints are available:
