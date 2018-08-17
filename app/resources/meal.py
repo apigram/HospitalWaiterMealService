@@ -66,7 +66,6 @@ class MealListResource(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         meal = Meal()
-        print(args['label'])
         meal.label = args['label']
         meal.total_quantity = args['total_quantity']
         meal.current_quantity = args['total_quantity']
