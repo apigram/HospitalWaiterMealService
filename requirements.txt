@@ -1,10 +1,4 @@
-flask
-flask-cors
-flask-mail
-flask-migrate
-flask-restful
-flask-sqlalchemy
-flask-migrate
-bcrypt
-itsdangerous
-flask-httpauth
+djangorestframework
+django
+django-cors
+drf-nested-routers
