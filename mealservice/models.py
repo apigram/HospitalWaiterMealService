@@ -1,29 +1,31 @@
 from django.db import models
 
 
+class MealTime(models.Model):
+    label = models.CharField(max_length=20)
+
+
+class RequirementType(models.Model):
+    COLOURS = [
+        ('red', 'red'),
+        ('yellow', 'yellow'),
+        ('green', 'green')
+    ]
+    label = models.CharField(max_length=20)
+    colour = models.CharField(max_length=10, choices=COLOURS)
+
+
 # Create your models here.
 class Requirement(models.Model):
-    REQUIREMENT_TYPES = [
-        ('ALLERGEN', 'Allergy'),
-        ('DIETARY_POSITIVE', 'Positive'),
-        ('DIETARY_NEGATIVE', 'Negative'),
-    ]
-
     label = models.CharField(max_length=100)
-    type = models.CharField(max_length=20, choices=REQUIREMENT_TYPES)
+    type = models.ForeignKey(RequirementType, on_delete=models.CASCADE)
 
 
 class Meal(models.Model):
-    MEAL_TIMES = [
-        ('BREAKFAST', 'Breakfast'),
-        ('LUNCH', 'Lunch'),
-        ('DINNER', 'Dinner'),
-        ('SNACK', 'Snack'),
-    ]
     label = models.CharField(max_length=100)
     total_quantity = models.IntegerField(default=0)
     current_quantity = models.IntegerField(default=0)
-    time_of_day = models.CharField(max_length=20, choices=MEAL_TIMES)
+    time_of_day = models.ForeignKey(MealTime, on_delete=models.CASCADE)
 
     meal_requirements = models.ManyToManyField(Requirement, through='MealRequirement', related_name='meal')
 
@@ -38,7 +40,11 @@ class Patient(models.Model):
 
 
 class PatientRequirement(models.Model):
-    scale = models.CharField(max_length=20)
+    SCALE_LIST = [
+        ('WHOLE', 'Whole'),
+        ('TRACE', 'Trace')
+    ]
+    scale = models.CharField(max_length=20, choices=SCALE_LIST)
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='requirements')
     requirement = models.ForeignKey(Requirement, on_delete=models.CASCADE, related_name='patients')
@@ -52,7 +58,11 @@ class PatientMeal(models.Model):
 
 
 class MealRequirement(models.Model):
-    scale = models.CharField(max_length=20)
+    SCALE_LIST = [
+        ('WHOLE', 'Whole'),
+        ('TRACE', 'Trace')
+    ]
+    scale = models.CharField(max_length=20, choices=SCALE_LIST)
 
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name='requirements')
     requirement = models.ForeignKey(Requirement, on_delete=models.CASCADE, related_name='meals')

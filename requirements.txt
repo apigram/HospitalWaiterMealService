@@ -1,4 +1,4 @@
 djangorestframework
 django
-django-cors
+django-cors-headers
 drf-nested-routers
