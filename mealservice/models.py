@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class MealTime(models.Model):
@@ -37,6 +38,7 @@ class Patient(models.Model):
 
     patient_requirements = models.ManyToManyField(Requirement, through='PatientRequirement', related_name='patient')
     patient_meals = models.ManyToManyField(Meal, through='PatientMeal', related_name='patient')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient')
 
 
 class PatientRequirement(models.Model):

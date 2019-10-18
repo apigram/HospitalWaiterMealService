@@ -17,9 +17,15 @@ class MealTimeSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    patient = serializers.HyperlinkedRelatedField(
+        view_name='patient-detail',
+        many=False,
+        read_only=True
+    )
+
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'is_staff']
+        fields = ['url', 'username', 'patient', 'email', 'is_staff']
 
 
 class PatientRequirementSerializer(NestedHyperlinkedModelSerializer):

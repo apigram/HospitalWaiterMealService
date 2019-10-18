@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -66,10 +65,17 @@ class CustomAuthToken(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
+        patient = Patient.objects.get(user=user)
         return Response({
             'user': {
                 'token': token.key,
                 'id': user.pk,
+                'patient': serializers.PatientSerializer(
+                    patient,
+                    many=False,
+                    read_only=True,
+                    context={'request': request}
+                ).data,
                 'email': user.email
             }
         })
